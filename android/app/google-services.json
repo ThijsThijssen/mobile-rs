@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "417298250985",
+    "firebase_url": "https://mobile-rs.firebaseio.com",
+    "project_id": "mobile-rs",
+    "storage_bucket": "mobile-rs.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:417298250985:android:ce575cce5d360d0f890478",
+        "android_client_info": {
+          "package_name": "nl.thijsthijssen.mobile_rs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "417298250985-oaki5t5a4v3lalf1qemkm8n59odb0tkm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDf7cgYafs_OlFCcShLR9Qx_1mY2_lZoQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "417298250985-oaki5t5a4v3lalf1qemkm8n59odb0tkm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
