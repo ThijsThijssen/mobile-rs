@@ -1,9 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_rs/domain/item.dart';
+import 'package:mobile_rs/domain/items.dart';
 import 'package:mobile_rs/screens/welcome_screen.dart';
+import 'package:mobile_rs/services/item_service.dart';
 import 'package:mobile_rs/widgets/sign_in_up_button.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+
+import '../service_locator.dart';
 
 class SignupScreen extends StatefulWidget {
   static String id = 'signup_screen';
@@ -25,15 +30,11 @@ class _SignupScreenState extends State<SignupScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  ItemService _itemService = locator<ItemService>();
+
   _submit() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-
-//      _firestore
-//          .collection('account')
-//          .where('username', isEqualTo: _username)
-//          .snapshots()
-//          .listen((data) => data.documents.forEach((doc) => print(doc['username'])));
 
       try {
         setState(() {
@@ -54,6 +55,14 @@ class _SignupScreenState extends State<SignupScreen> {
             'username': _username,
             'email': _email,
           });
+
+          final Item item = Item(
+              itemId: Items.coins.itemId,
+              itemName: Items.coins.itemName,
+              itemAmount: 10000,
+              itemImage: Items.coins.itemImage);
+
+          await _itemService.addItem(item);
 
           Navigator.pushNamed(context, WelcomeScreen.id);
         }

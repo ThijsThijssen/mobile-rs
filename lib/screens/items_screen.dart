@@ -1,8 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_rs/domain/item.dart';
+import 'package:mobile_rs/services/item_service.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+
+import '../service_locator.dart';
 
 class ItemsScreen extends StatefulWidget {
   static final String id = 'items_screen';
@@ -12,9 +14,6 @@ class ItemsScreen extends StatefulWidget {
 }
 
 class _ItemsScreenState extends State<ItemsScreen> {
-  final _auth = FirebaseAuth.instance;
-  final _firestore = Firestore.instance;
-
   final _formKey = GlobalKey<FormState>();
 
   String _itemSearch;
@@ -23,100 +22,41 @@ class _ItemsScreenState extends State<ItemsScreen> {
   FirebaseUser loggedInUser;
   bool showSpinner = false;
 
-  dynamic items = [{}];
+  List<Item> items = [];
+
+  ItemService _itemService = locator<ItemService>();
 
   _submit() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
-      await _getItems(loggedInUser);
+      setState(() {
+        showSpinner = true;
+      });
 
-      // search for items containing search term in name
-      List<Map<String, dynamic>> searchedItems = [{}];
-
-      for (Map<String, dynamic> mapItem in items) {
-        Item item = _mapToItem(mapItem);
-
-        if (item.itemName.contains(_itemSearch)) {
-          searchedItems.add(mapItem);
-          print(mapItem);
-        }
-      }
-
-      if (searchedItems.length == 0) {
-        searchedItems.add({
-          'itemId': 404,
-          'itemName': 'Not Found',
-          'itemAmount': '',
-          'itemImage': 'not_found'
-        });
-      }
+      items = [];
+      items = await _itemService.getItemsByName(_itemSearch);
 
       setState(() {
-        items = searchedItems;
+        showSpinner = false;
       });
 
       _itemSearchController.clear();
     }
   }
 
-  Item _mapToItem(Map<String, dynamic> map) {
-    return Item(
-        itemId: map['itemId'],
-        itemName: map['itemName'],
-        itemAmount: map['itemAmount'],
-        itemImage: map['itemImage']);
-  }
-
   _clear() {
-    // remove search filter from stream
-    _getItems(loggedInUser);
-
+    _getItems();
     _itemSearchController.clear();
   }
 
-  _getCurrentUser() async {
-    try {
-      setState(() {
-        showSpinner = true;
-      });
-
-      final user = await _auth.currentUser();
-
-      if (user != null) {
-        loggedInUser = user;
-        print('${user.uid} logged in');
-
-        await _getItems(user);
-      }
-
-      setState(() {
-        showSpinner = false;
-      });
-    } catch (e) {
-      setState(() {
-        showSpinner = false;
-      });
-      print(e);
-    }
-  }
-
-  Future _getItems(FirebaseUser user) async {
+  void _getItems() async {
     setState(() {
       showSpinner = true;
     });
 
-    await _firestore
-        .collection('items')
-        .document(user.uid)
-        .get()
-        .then((DocumentSnapshot ds) {
-      if (ds.exists) {
-        items = ds.data['items'];
-      } else {
-        items = [{}];
-      }
-    });
+    items = [];
+    items = await _itemService.getItems();
 
     setState(() {
       showSpinner = false;
@@ -126,8 +66,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
   @override
   void initState() {
     super.initState();
-
-    _getCurrentUser();
+    _getItems();
   }
 
   @override
@@ -190,25 +129,29 @@ class _ItemsScreenState extends State<ItemsScreen> {
                 itemBuilder: (BuildContext context, int index) {
                   final item = items[index];
 
-                  return Card(
-                    child: ListTile(
-                      leading: Image(
-                        image: AssetImage(showSpinner == false
-                            ? 'assets/img/items/${item['itemImage']}.png'
+                  if (item != null) {
+                    return Card(
+                      child: ListTile(
+                        leading: Image(
+                          image: AssetImage(showSpinner == false
+                              ? 'assets/img/items/${item.itemImage}.png'
+                              : ''),
+                          width: 50.0,
+                        ),
+                        title: Text(
+                            showSpinner == false ? item.itemName ?? '' : ''),
+                        subtitle: Text(showSpinner == false
+                            ? 'Amount: ${item.itemAmount}'
                             : ''),
-                        width: 50.0,
+                        trailing: IconButton(
+                          icon: Icon(Icons.more_vert),
+                          onPressed: () {},
+                        ),
                       ),
-                      title: Text(
-                          showSpinner == false ? item['itemName'] ?? '' : ''),
-                      subtitle: Text(showSpinner == false
-                          ? 'Amount: ${item['itemAmount']}'
-                          : ''),
-                      trailing: IconButton(
-                        icon: Icon(Icons.more_vert),
-                        onPressed: () {},
-                      ),
-                    ),
-                  );
+                    );
+                  } else {
+                    return null;
+                  }
                 }),
           ),
         ],

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_rs/domain/item.dart';
+import 'package:mobile_rs/domain/items.dart';
 import 'package:mobile_rs/widgets/sign_in_up_button.dart';
 
 class SkillsScreen extends StatefulWidget {
@@ -29,6 +30,8 @@ class _SkillsScreenState extends State<SkillsScreen> {
 
   dynamic items;
 
+//  ItemService _itemService = locator<ItemService>();
+
   _getCurrentItems() async {
     DocumentSnapshot ds =
         await _firestore.collection('items').document(loggedInUser.uid).get();
@@ -46,11 +49,16 @@ class _SkillsScreenState extends State<SkillsScreen> {
 
       await _getCurrentItems();
 
+//      final item = Item(
+//          itemId: int.parse(_itemId),
+//          itemName: _itemName,
+//          itemAmount: int.parse(_itemAmount),
+//          itemImage: _itemImage);
       final item = Item(
-          itemId: int.parse(_itemId),
-          itemName: _itemName,
+          itemId: Items.coins.itemId,
+          itemName: Items.coins.itemName,
           itemAmount: int.parse(_itemAmount),
-          itemImage: _itemImage);
+          itemImage: Items.coins.itemImage);
 
       bool addItem = true;
 
