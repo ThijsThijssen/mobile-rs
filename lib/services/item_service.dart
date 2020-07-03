@@ -16,4 +16,8 @@ class ItemService {
   Future<Item> addItem(Item item) async {
     return _itemDAO.addItem(item);
   }
+
+  Future<Item> removeItem(Item item) {
+    return _itemDAO.removeItem(item);
+  }
 }

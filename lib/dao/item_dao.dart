@@ -84,22 +84,50 @@ class ItemDAO {
         items.add(newItem);
       }
 
-      // convert normal items to firestore format
-      List<Map<String, dynamic>> dbItems = List<Map<String, dynamic>>();
-
-      for (Item existingItem in items) {
-        dbItems.add(existingItem.toMap());
-      }
-
-      // update item list
-      await _firestore
-          .collection('items')
-          .document(user.uid)
-          .setData({'items': dbItems});
+      _updateItems(items);
 
       return newItem;
     } else {
       return null;
     }
+  }
+
+  Future<Item> removeItem(Item itemToRemove) async {
+    List<Item> items = await getItems();
+
+    Item removeItem;
+
+    for (Item existingItem in items) {
+      if (existingItem.itemId == itemToRemove.itemId) {
+        if (itemToRemove.itemAmount >= existingItem.itemAmount) {
+          removeItem = existingItem;
+        }
+
+        existingItem.itemAmount -= itemToRemove.itemAmount;
+      }
+    }
+
+    if (removeItem != null) {
+      items.remove(removeItem);
+    }
+
+    await _updateItems(items);
+
+    return itemToRemove;
+  }
+
+  void _updateItems(List<Item> items) async {
+    // convert normal items to firestore format
+    List<Map<String, dynamic>> dbItems = List<Map<String, dynamic>>();
+
+    for (Item existingItem in items) {
+      dbItems.add(existingItem.toMap());
+    }
+
+    // update item list
+    await _firestore
+        .collection('items')
+        .document(user.uid)
+        .setData({'items': dbItems});
   }
 }

@@ -1,9 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_rs/domain/item.dart';
 import 'package:mobile_rs/domain/items.dart';
+import 'package:mobile_rs/services/item_service.dart';
 import 'package:mobile_rs/widgets/sign_in_up_button.dart';
+
+import '../service_locator.dart';
 
 class SkillsScreen extends StatefulWidget {
   static final String id = 'skills_screen';
@@ -13,15 +15,12 @@ class SkillsScreen extends StatefulWidget {
 }
 
 class _SkillsScreenState extends State<SkillsScreen> {
-  final _auth = FirebaseAuth.instance;
-  final _firestore = Firestore.instance;
-
   FirebaseUser loggedInUser;
   bool showSpinner = false;
 
   final _formKey = GlobalKey<FormState>();
 
-  String _itemId, _itemName, _itemAmount, _itemImage;
+  String _itemAmount;
 
   final _itemIdController = TextEditingController();
   final _itemNameController = TextEditingController();
@@ -30,62 +29,19 @@ class _SkillsScreenState extends State<SkillsScreen> {
 
   dynamic items;
 
-//  ItemService _itemService = locator<ItemService>();
+  ItemService _itemService = locator<ItemService>();
 
-  _getCurrentItems() async {
-    DocumentSnapshot ds =
-        await _firestore.collection('items').document(loggedInUser.uid).get();
-
-    if (ds.exists) {
-      items = ds.data['items'];
-    } else {
-      items = List<Map<String, dynamic>>();
-    }
-  }
-
-  _submit() async {
+  _addItem() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
-      await _getCurrentItems();
-
-//      final item = Item(
-//          itemId: int.parse(_itemId),
-//          itemName: _itemName,
-//          itemAmount: int.parse(_itemAmount),
-//          itemImage: _itemImage);
       final item = Item(
           itemId: Items.coins.itemId,
           itemName: Items.coins.itemName,
           itemAmount: int.parse(_itemAmount),
           itemImage: Items.coins.itemImage);
 
-      bool addItem = true;
-
-      for (Map<String, dynamic> map in items) {
-        if (map['itemId'] == item.itemId) {
-          print(
-              'item already exists, updating amount from ${map['itemAmount']}');
-          map['itemAmount'] += item.itemAmount;
-          print('to ${map['itemAmount']}');
-
-          addItem = false;
-        }
-      }
-
-      if (addItem) {
-        print('added item to list');
-        items.add(item.toMap());
-      }
-
-      if (loggedInUser != null) {
-        await _firestore
-            .collection('items')
-            .document(loggedInUser.uid)
-            .setData({'items': items});
-      } else {
-        print('Nobody is logged in...');
-      }
+      await _itemService.addItem(item);
 
       _itemIdController.clear();
       _itemNameController.clear();
@@ -94,34 +50,23 @@ class _SkillsScreenState extends State<SkillsScreen> {
     }
   }
 
-  void getCurrentUser() async {
-    try {
-      setState(() {
-        showSpinner = true;
-      });
+  _removeItem() async {
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
 
-      final user = await _auth.currentUser();
+      final item = Item(
+          itemId: Items.coins.itemId,
+          itemName: Items.coins.itemName,
+          itemAmount: int.parse(_itemAmount),
+          itemImage: Items.coins.itemImage);
 
-      if (user != null) {
-        loggedInUser = user;
-      }
+      await _itemService.removeItem(item);
 
-      setState(() {
-        showSpinner = false;
-      });
-    } catch (e) {
-      setState(() {
-        showSpinner = false;
-      });
-      print(e);
+      _itemIdController.clear();
+      _itemNameController.clear();
+      _itemAmountController.clear();
+      _itemImageController.clear();
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    getCurrentUser();
   }
 
   @override
@@ -153,41 +98,20 @@ class _SkillsScreenState extends State<SkillsScreen> {
                 Padding(
                   padding: EdgeInsets.all(15.0),
                   child: TextFormField(
-                    controller: _itemIdController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(labelText: 'Item ID'),
-                    onSaved: (input) => _itemId = input,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(15.0),
-                  child: TextFormField(
-                    controller: _itemNameController,
-                    decoration: InputDecoration(labelText: 'Item Name'),
-                    onSaved: (input) => _itemName = input,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(15.0),
-                  child: TextFormField(
                     controller: _itemAmountController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(labelText: 'Item Amount'),
                     onSaved: (input) => _itemAmount = input,
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.all(15.0),
-                  child: TextFormField(
-                    controller: _itemImageController,
-                    decoration: InputDecoration(labelText: 'Item Image'),
-                    onSaved: (input) => _itemImage = input,
-                  ),
-                ),
                 SignInUpButton(
                   buttonText: 'Add item',
-                  onPressed: _submit,
-                )
+                  onPressed: _addItem,
+                ),
+                SignInUpButton(
+                  buttonText: 'Remove item',
+                  onPressed: _removeItem,
+                ),
               ],
             ),
           ),
