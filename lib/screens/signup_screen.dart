@@ -1,10 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_rs/domain/item.dart';
-import 'package:mobile_rs/domain/items.dart';
 import 'package:mobile_rs/screens/welcome_screen.dart';
-import 'package:mobile_rs/services/item_service.dart';
+import 'package:mobile_rs/services/user_service.dart';
 import 'package:mobile_rs/widgets/sign_in_up_button.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
@@ -18,9 +14,6 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  final _auth = FirebaseAuth.instance;
-  final _firestore = Firestore.instance;
-
   final _formKey = GlobalKey<FormState>();
   String _username, _email, _password;
 
@@ -30,7 +23,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  ItemService _itemService = locator<ItemService>();
+  UserService _userService = locator<UserService>();
 
   _submit() async {
     if (_formKey.currentState.validate()) {
@@ -41,29 +34,7 @@ class _SignupScreenState extends State<SignupScreen> {
           showSpinner = true;
         });
 
-        final newUser = await _auth.createUserWithEmailAndPassword(
-          email: _email,
-          password: _password,
-        );
-
-        if (newUser != null) {
-          print(newUser.user.uid);
-          print(_username);
-
-          _firestore.collection('account').document(newUser.user.uid).setData({
-            'uid': newUser.user.uid,
-            'username': _username,
-            'email': _email,
-          });
-
-          final Item item = Item(
-              itemId: Items.coins.itemId,
-              itemName: Items.coins.itemName,
-              itemAmount: 10000,
-              itemImage: Items.coins.itemImage);
-
-          await _itemService.addItem(item);
-
+        if (await _userService.createUser(_username, _email, _password)) {
           Navigator.pushNamed(context, WelcomeScreen.id);
         }
 

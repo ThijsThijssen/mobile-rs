@@ -97,7 +97,9 @@ class ItemDAO {
           .document(user.uid)
           .setData({'items': dbItems});
 
-      return await newItem;
+      return newItem;
+    } else {
+      return null;
     }
   }
 }

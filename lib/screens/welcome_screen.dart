@@ -1,10 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mobile_rs/screens/skills_screen.dart';
+import 'package:mobile_rs/services/user_service.dart';
 
 import '../constants.dart';
+import '../service_locator.dart';
 import 'items_screen.dart';
 import 'login_screen.dart';
 
@@ -16,11 +16,9 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  final _auth = FirebaseAuth.instance;
-  FirebaseUser loggedInUser;
   String username;
 
-  final _firestore = Firestore.instance;
+  final UserService _userService = locator<UserService>();
 
   bool showSpinner = false;
 
@@ -59,19 +57,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         showSpinner = true;
       });
 
-      final user = await _auth.currentUser();
-
-      if (user != null) {
-        loggedInUser = user;
-
-        await _firestore
-            .collection('account')
-            .document(loggedInUser.uid)
-            .get()
-            .then((DocumentSnapshot ds) {
-          username = ds.data['username'];
-        });
-      }
+      username = await _userService.getUsername();
 
       setState(() {
         showSpinner = false;
@@ -86,7 +72,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   _choiceAction(String choice) {
     if (choice == kSignOutPopup) {
-      _auth.signOut();
+      _userService.signOut();
       Navigator.pushReplacementNamed(context, LoginScreen.id);
     }
 
