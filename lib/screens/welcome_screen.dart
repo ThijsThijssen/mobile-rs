@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mobile_rs/screens/shop_screen.dart';
 import 'package:mobile_rs/screens/skills_screen.dart';
 import 'package:mobile_rs/services/user_service.dart';
 
@@ -33,9 +34,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     Center(
       child: Text('Gear'),
     ),
-    Center(
-      child: Text('Shop'),
-    ),
+    ShopScreen(),
   ];
 
   @override

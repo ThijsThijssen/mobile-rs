@@ -2,19 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:mobile_rs/domain/item.dart';
 import 'package:mobile_rs/domain/items.dart';
 import 'package:mobile_rs/services/item_service.dart';
-import 'package:mobile_rs/services/skill_service.dart';
 import 'package:mobile_rs/widgets/sign_in_up_button.dart';
 
 import '../service_locator.dart';
 
-class SkillsScreen extends StatefulWidget {
-  static final String id = 'skills_screen';
+class ShopScreen extends StatefulWidget {
+  static final String id = 'shop_screen';
 
   @override
-  _SkillsScreenState createState() => _SkillsScreenState();
+  _ShopScreenState createState() => _ShopScreenState();
 }
 
-class _SkillsScreenState extends State<SkillsScreen> {
+class _ShopScreenState extends State<ShopScreen> {
   bool showSpinner = false;
 
   final _formKey = GlobalKey<FormState>();
@@ -25,17 +24,22 @@ class _SkillsScreenState extends State<SkillsScreen> {
   final _itemAmountController = TextEditingController();
 
   ItemService _itemService = locator<ItemService>();
-  SkillService _skillService = locator<SkillService>();
 
   _addItem() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
+      final item = Item(
+          itemId: selectedItem.itemId,
+          itemName: selectedItem.itemName,
+          itemAmount: int.parse(_itemAmount),
+          itemImage: selectedItem.itemImage);
+
       setState(() {
         showSpinner = true;
       });
 
-      print(_skillService.currentLevel(int.parse(_itemAmount)));
+      await _itemService.addItem(item);
 
       setState(() {
         showSpinner = false;

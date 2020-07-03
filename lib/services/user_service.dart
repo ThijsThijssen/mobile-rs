@@ -3,6 +3,7 @@ import 'package:mobile_rs/dao/user_dao.dart';
 import 'package:mobile_rs/domain/item.dart';
 import 'package:mobile_rs/domain/items.dart';
 import 'package:mobile_rs/services/item_service.dart';
+import 'package:mobile_rs/services/skill_service.dart';
 
 import '../service_locator.dart';
 
@@ -13,6 +14,7 @@ class UserService {
 
   final ItemService _itemService = locator<ItemService>();
   final UserDAO _userDAO = locator<UserDAO>();
+  final SkillService _skillService = locator<SkillService>();
 
   // create account
   Future<bool> createUser(
@@ -24,6 +26,7 @@ class UserService {
       try {
         await _createUserCollection(username, email);
         await _createItemsCollection();
+        await _createSkillsCollection();
 
         return true;
       } catch (e) {
@@ -41,15 +44,18 @@ class UserService {
 
   void _createItemsCollection() async {
     final Item item = Item(
-        itemId: Items.coins.itemId,
-        itemName: Items.coins.itemName,
+        itemId: Items.Coins.itemId,
+        itemName: Items.Coins.itemName,
         itemAmount: 10000,
-        itemImage: Items.coins.itemImage);
+        itemImage: Items.Coins.itemImage);
 
     await _itemService.addItem(item);
   }
 
-  // sign in
+  void _createSkillsCollection() async {
+    await _skillService.createSkillsCollection();
+  }
+
   Future<bool> signIn(String email, String password) async {
     final user = await _auth.signInWithEmailAndPassword(
       email: email,
