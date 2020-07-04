@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_rs/domain/activity.dart';
 import 'package:mobile_rs/domain/item.dart';
 import 'package:mobile_rs/domain/items.dart';
+import 'package:mobile_rs/domain/skills.dart';
+import 'package:mobile_rs/services/activity_service.dart';
 import 'package:mobile_rs/services/item_service.dart';
 import 'package:mobile_rs/widgets/sign_in_up_button.dart';
 
@@ -77,6 +80,45 @@ class _ShopScreenState extends State<ShopScreen> {
   void dispose() {
     _itemAmountController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _createActivity();
+  }
+
+  _createActivity() async {
+    ActivityService _activityService = locator<ActivityService>();
+
+    Activity activity = Activity(
+        name: 'Dragon claws',
+        image: 'dragon_claws',
+        skill: Skills.Smithing.skillName,
+        levelRequirement: 80,
+        itemRequirements: [
+          Item(
+              itemId: Items.Bronze_dagger.itemId,
+              itemName: Items.Bronze_dagger.itemName,
+              itemAmount: 1,
+              itemImage: Items.Bronze_dagger.itemImage),
+          Item(
+              itemId: Items.Dragon_claws.itemId,
+              itemName: Items.Dragon_claws.itemName,
+              itemAmount: 1,
+              itemImage: Items.Dragon_claws.itemImage),
+        ],
+        experienceReward: 1337,
+        itemRewards: [
+          Item(
+              itemId: Items.Coins.itemId,
+              itemName: Items.Coins.itemName,
+              itemAmount: 15000,
+              itemImage: Items.Coins.itemImage),
+        ]);
+
+    await _activityService.createActivity(activity);
   }
 
   @override

@@ -30,7 +30,7 @@ class ItemDAO {
 
       if (mapItems != null) {
         for (Map<String, dynamic> mapItem in mapItems) {
-          items.add(_mapToItem(mapItem));
+          items.add(mapToItem(mapItem));
         }
       }
 
@@ -54,7 +54,7 @@ class ItemDAO {
     return itemsByName;
   }
 
-  Item _mapToItem(Map<String, dynamic> mapItem) {
+  Item mapToItem(Map<String, dynamic> mapItem) {
     return Item(
         itemId: mapItem['itemId'],
         itemName: mapItem['itemName'],

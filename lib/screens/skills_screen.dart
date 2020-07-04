@@ -65,12 +65,11 @@ class _SkillsScreenState extends State<SkillsScreen> {
                   if (skill != null) {
                     return GestureDetector(
                       onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (context) => SkillActivitiesScreen(
-                            skill: skill,
-                          ),
-                        );
+                        showDialog(
+                            context: context,
+                            builder: (context) => SkillActivitiesScreen(
+                                  skill: skill,
+                                ));
                       },
                       child: Card(
                         child: ListTile(
