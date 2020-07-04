@@ -22,7 +22,11 @@ class SkillService {
     return await _skillDAO.createSkillsCollection(skills);
   }
 
-  int _experienceForLevel(int level) {
+  Future<List<Skill>> getSkills() async {
+    return await _skillDAO.getSkills();
+  }
+
+  int _experienceNeededForLevel(int level) {
     double total = 0;
 
     for (int i = 1; i < level; i++) {
@@ -32,13 +36,17 @@ class SkillService {
     return (total / 4).floor();
   }
 
-  int currentLevel(int experience) {
+  int currentLvlByExp(int experience) {
     int currentLevel = 1;
 
-    for (int level = 1; level < 99; level++) {
-      if (experience >= _experienceForLevel(level) &&
-          experience <= _experienceForLevel(level + 1)) {
+    for (int level = 1; level <= 99; level++) {
+      if (level == 99 && experience >= _experienceNeededForLevel(level)) {
         currentLevel = level;
+      } else {
+        if (experience >= _experienceNeededForLevel(level) &&
+            experience <= _experienceNeededForLevel(level + 1)) {
+          currentLevel = level;
+        }
       }
     }
 

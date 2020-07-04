@@ -32,4 +32,45 @@ class SkillDAO {
         .document(user.uid)
         .setData({'skills': dbSkills});
   }
+
+  Future<List<Skill>> getSkills() async {
+    if (_auth.currentUser() != null) {
+      user = await _auth.currentUser();
+
+      List<dynamic> mapSkills = [];
+
+      await _firestore
+          .collection('skills')
+          .document(user.uid)
+          .get()
+          .then((DocumentSnapshot ds) {
+        if (ds.exists) {
+          mapSkills = ds.data['skills'];
+        } else {
+          mapSkills = null;
+        }
+      });
+
+      List<Skill> skills = [];
+
+      if (mapSkills != null) {
+        for (Map<String, dynamic> mapSkill in mapSkills) {
+          skills.add(_mapToSkill(mapSkill));
+        }
+      }
+
+      return skills;
+    } else {
+      // user is not authenticated throw error
+      return null;
+    }
+  }
+
+  Skill _mapToSkill(Map<String, dynamic> mapSkill) {
+    return Skill(
+        skillId: mapSkill['skillId'],
+        skillName: mapSkill['skillName'],
+        skillExperience: mapSkill['skillExperience'],
+        skillImage: mapSkill['skillImage']);
+  }
 }

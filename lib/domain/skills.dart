@@ -19,7 +19,7 @@ enum Skills {
   Thieving,
   Slayer,
   Farming,
-  Runecrafting,
+  Runecraft,
   Hunter,
   Construction,
 }
@@ -46,7 +46,7 @@ extension SkillsExtension on Skills {
     Skills.Thieving: 17,
     Skills.Slayer: 18,
     Skills.Farming: 19,
-    Skills.Runecrafting: 20,
+    Skills.Runecraft: 20,
     Skills.Hunter: 21,
     Skills.Construction: 22,
   };
@@ -72,7 +72,7 @@ extension SkillsExtension on Skills {
     Skills.Thieving: 'Thieving',
     Skills.Slayer: 'Slayer',
     Skills.Farming: 'Farming',
-    Skills.Runecrafting: 'Runecrafting',
+    Skills.Runecraft: 'Runecraft',
     Skills.Hunter: 'Hunter',
     Skills.Construction: 'Construction',
   };
@@ -98,7 +98,7 @@ extension SkillsExtension on Skills {
     Skills.Thieving: 'Thieving_icon',
     Skills.Slayer: 'Slayer_icon',
     Skills.Farming: 'Farming_icon',
-    Skills.Runecrafting: 'Runecrafting_icon',
+    Skills.Runecraft: 'Runecraft_icon',
     Skills.Hunter: 'Hunter_icon',
     Skills.Construction: 'Construction_icon',
   };

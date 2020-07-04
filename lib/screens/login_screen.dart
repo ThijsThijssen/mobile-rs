@@ -72,8 +72,8 @@ class _LoginScreenState extends State<LoginScreen> {
               Text(
                 'Mobile RS',
                 style: TextStyle(
-                  fontFamily: 'Billabong',
-                  fontSize: 50.0,
+                  fontFamily: 'Runescape',
+                  fontSize: 55.0,
                 ),
               ),
               Form(
@@ -94,6 +94,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             ? 'Please enter a valid email'
                             : null,
                         onSaved: (input) => _email = input,
+                        style: TextStyle(
+                          fontFamily: 'Runescape',
+                          fontSize: 25.0,
+                        ),
                       ),
                     ),
                     Padding(
@@ -109,6 +113,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             : null,
                         onSaved: (input) => _password = input,
                         obscureText: true,
+                        style: TextStyle(
+                          fontFamily: 'Runescape',
+                          fontSize: 25.0,
+                        ),
                       ),
                     ),
                     SizedBox(

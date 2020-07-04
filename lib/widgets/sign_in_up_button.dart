@@ -19,8 +19,9 @@ class SignInUpButton extends StatelessWidget {
         child: Text(
           '$buttonText',
           style: TextStyle(
+            fontFamily: 'Runescape',
             color: Colors.black,
-            fontSize: 18.0,
+            fontSize: 25.0,
           ),
         ),
       ),

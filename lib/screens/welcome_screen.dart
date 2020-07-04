@@ -83,7 +83,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(username != null ? username : ''),
+        title: Text(
+          username != null ? username : '',
+          style: TextStyle(
+            fontFamily: 'Runescape',
+            fontSize: 30.0,
+          ),
+        ),
         actions: <Widget>[
           PopupMenuButton<String>(
             onSelected: _choiceAction,

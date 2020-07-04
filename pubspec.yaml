@@ -35,3 +35,6 @@ flutter:
     - family: Billabong
       fonts:
         - asset: assets/fonts/Billabong.ttf
+    - family: Runescape
+      fonts:
+        - asset: assets/fonts/Runescape.ttf

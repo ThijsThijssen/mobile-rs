@@ -81,6 +81,16 @@ class _ItemsScreenState extends State<ItemsScreen> {
       inAsyncCall: showSpinner,
       child: Column(
         children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(top: 10.0),
+            child: Text(
+              'Items',
+              style: TextStyle(
+                fontSize: 55.0,
+                fontFamily: 'Runescape',
+              ),
+            ),
+          ),
           Form(
             key: _formKey,
             child: Row(
@@ -106,19 +116,17 @@ class _ItemsScreenState extends State<ItemsScreen> {
                           ? 'Enter an item to search'
                           : null,
                       onSaved: (input) => _itemSearch = input,
+                      style: TextStyle(
+                        fontFamily: 'Runescape',
+                        fontSize: 25.0,
+                      ),
                     ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 15.0,
-                    vertical: 15.0,
-                  ),
-                  child: IconButton(
-                    onPressed: _submit,
-                    icon: Icon(Icons.search),
-                    iconSize: 50.0,
-                  ),
+                IconButton(
+                  onPressed: _submit,
+                  icon: Icon(Icons.search),
+                  iconSize: 50.0,
                 ),
               ],
             ),
@@ -133,16 +141,24 @@ class _ItemsScreenState extends State<ItemsScreen> {
                     return Card(
                       child: ListTile(
                         leading: Image(
-                          image: AssetImage(showSpinner == false
-                              ? 'assets/img/items/${item.itemImage}.png'
-                              : ''),
+                          image: AssetImage(
+                              'assets/img/items/${item.itemImage}.png'),
                           width: 50.0,
                         ),
                         title: Text(
-                            showSpinner == false ? item.itemName ?? '' : ''),
-                        subtitle: Text(showSpinner == false
-                            ? 'Amount: ${item.itemAmount}'
-                            : ''),
+                          item.itemName,
+                          style: TextStyle(
+                            fontFamily: 'Runescape',
+                            fontSize: 25.0,
+                          ),
+                        ),
+                        subtitle: Text(
+                          'Amount: ${item.itemAmount}',
+                          style: TextStyle(
+                            fontFamily: 'Runescape',
+                            fontSize: 20.0,
+                          ),
+                        ),
                         trailing: IconButton(
                           icon: Icon(Icons.more_vert),
                           onPressed: () {},

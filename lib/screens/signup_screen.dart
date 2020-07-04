@@ -75,8 +75,8 @@ class _SignupScreenState extends State<SignupScreen> {
               Text(
                 'Registration',
                 style: TextStyle(
-                  fontFamily: 'Billabong',
-                  fontSize: 50.0,
+                  fontFamily: 'Runescape',
+                  fontSize: 55.0,
                 ),
               ),
               Form(
@@ -95,6 +95,10 @@ class _SignupScreenState extends State<SignupScreen> {
                             ? 'Please enter a valid username'
                             : null,
                         onSaved: (input) => _username = input,
+                        style: TextStyle(
+                          fontFamily: 'Runescape',
+                          fontSize: 25.0,
+                        ),
                       ),
                     ),
                     Padding(
@@ -109,6 +113,10 @@ class _SignupScreenState extends State<SignupScreen> {
                             ? 'Please enter a valid email'
                             : null,
                         onSaved: (input) => _email = input,
+                        style: TextStyle(
+                          fontFamily: 'Runescape',
+                          fontSize: 25.0,
+                        ),
                       ),
                     ),
                     Padding(
@@ -123,6 +131,10 @@ class _SignupScreenState extends State<SignupScreen> {
                             : null,
                         onSaved: (input) => _password = input,
                         obscureText: true,
+                        style: TextStyle(
+                          fontFamily: 'Runescape',
+                          fontSize: 25.0,
+                        ),
                       ),
                     ),
                     SizedBox(
