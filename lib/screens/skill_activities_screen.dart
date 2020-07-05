@@ -27,6 +27,10 @@ class _SkillActivitiesScreenState extends State<SkillActivitiesScreen> {
 
   List<Activity> activities;
 
+  final _formKey = GlobalKey<FormState>();
+  String _activitySearch;
+  final _activitySearchController = TextEditingController();
+
   _getActivities() async {
     setState(() {
       showSpinner = true;
@@ -42,13 +46,89 @@ class _SkillActivitiesScreenState extends State<SkillActivitiesScreen> {
 
   List<Widget> _getItemRequirements(List<Item> itemRequirements) {
     List<Widget> widgetRequirements = List<Widget>();
-    widgetRequirements.add(Text('Items required:'));
+    widgetRequirements.add(Text(
+      'Items required:',
+      style: TextStyle(
+        fontFamily: 'Runescape',
+        fontSize: 22.0,
+      ),
+    ));
+
+    widgetRequirements.add(
+      SizedBox(
+        height: 10.0,
+      ),
+    );
 
     for (Item item in itemRequirements) {
-      widgetRequirements.add(Text('${item.itemAmount} x ${item.itemName}'));
+      widgetRequirements.add(Text(
+        '${item.itemAmount} x ${item.itemName}',
+        style: TextStyle(
+          fontFamily: 'Runescape',
+          fontSize: 20.0,
+        ),
+      ));
     }
 
+    widgetRequirements.add(
+      SizedBox(
+        height: 10.0,
+      ),
+    );
+
+    widgetRequirements.add(Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        SizedBox(
+          width: 60.0,
+          child: RaisedButton(
+            onPressed: () {},
+            child: Text('1'),
+          ),
+        ),
+        SizedBox(
+          width: 60.0,
+          child: RaisedButton(
+            onPressed: () {},
+            child: Text('10'),
+          ),
+        ),
+        SizedBox(
+          width: 60.0,
+          child: RaisedButton(
+            onPressed: () {},
+            child: Text('100'),
+          ),
+        ),
+      ],
+    ));
+
     return widgetRequirements;
+  }
+
+  _submit() async {
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+
+      setState(() {
+        showSpinner = true;
+      });
+
+      activities = [];
+      activities = await _activityService.getActivitiesBySkillAndName(
+          widget.skill, _activitySearch);
+
+      setState(() {
+        showSpinner = false;
+      });
+
+      _activitySearchController.clear();
+    }
+  }
+
+  _clear() {
+    _getActivities();
+    _activitySearchController.clear();
   }
 
   Future<void> _showRequirementsDialog(Activity activity) async {
@@ -57,7 +137,13 @@ class _SkillActivitiesScreenState extends State<SkillActivitiesScreen> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(activity.name),
+          title: Text(
+            activity.name,
+            style: TextStyle(
+              fontFamily: 'Runescape',
+              fontSize: 28.0,
+            ),
+          ),
           content: SingleChildScrollView(
             child: ListBody(
               children: _getItemRequirements(activity.itemRequirements),
@@ -65,7 +151,13 @@ class _SkillActivitiesScreenState extends State<SkillActivitiesScreen> {
           ),
           actions: <Widget>[
             FlatButton(
-              child: Text('Close'),
+              child: Text(
+                'Close',
+                style: TextStyle(
+                  fontFamily: 'Runescape',
+                  fontSize: 20.0,
+                ),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -81,6 +173,12 @@ class _SkillActivitiesScreenState extends State<SkillActivitiesScreen> {
     super.initState();
 
     _getActivities();
+  }
+
+  @override
+  void dispose() {
+    _activitySearchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -104,6 +202,47 @@ class _SkillActivitiesScreenState extends State<SkillActivitiesScreen> {
                 fontFamily: 'Runescape',
               ),
             ),
+            Form(
+              key: _formKey,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 0.0,
+                    ),
+                    child: IconButton(
+                      onPressed: _clear,
+                      icon: Icon(Icons.clear),
+                      iconSize: 25.0,
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                      child: TextFormField(
+                        controller: _activitySearchController,
+                        decoration:
+                            InputDecoration(labelText: 'Search activity'),
+                        validator: (input) => input.trim().isEmpty
+                            ? 'Enter an activity to search'
+                            : null,
+                        onSaved: (input) => _activitySearch = input,
+                        style: TextStyle(
+                          fontFamily: 'Runescape',
+                          fontSize: 20.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: _submit,
+                    icon: Icon(Icons.search),
+                    iconSize: 35.0,
+                  ),
+                ],
+              ),
+            ),
             Expanded(
               child: ListView.builder(
                   itemCount: activities.length ?? 0,
@@ -118,20 +257,20 @@ class _SkillActivitiesScreenState extends State<SkillActivitiesScreen> {
                             leading: Image(
                               image: AssetImage(
                                   'assets/img/items/${activity.image}.png'),
-                              width: 50.0,
+                              width: 40.0,
                             ),
                             title: Text(
                               activity.name,
                               style: TextStyle(
                                 fontFamily: 'Runescape',
-                                fontSize: 25.0,
+                                fontSize: 20.0,
                               ),
                             ),
                             subtitle: Text(
                               'Level: ${activity.levelRequirement}',
                               style: TextStyle(
                                 fontFamily: 'Runescape',
-                                fontSize: 20.0,
+                                fontSize: 18.0,
                               ),
                             ),
                             trailing: IconButton(

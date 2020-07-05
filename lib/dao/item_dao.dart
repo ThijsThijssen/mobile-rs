@@ -46,7 +46,7 @@ class ItemDAO {
     List<Item> itemsByName = [];
 
     for (Item item in allItems) {
-      if (item.itemImage.contains(itemName)) {
+      if (item.itemName.contains(itemName)) {
         itemsByName.add(item);
       }
     }

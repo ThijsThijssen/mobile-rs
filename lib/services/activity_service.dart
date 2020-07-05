@@ -73,4 +73,19 @@ class ActivityService {
     final path = await localPath();
     return File('$path/activities.json');
   }
+
+  Future<List<Activity>> getActivitiesBySkillAndName(
+      Skill skill, String activitySearch) async {
+    List<Activity> activities = await getActivitiesBySkill(skill);
+
+    List<Activity> activitiesByName = List<Activity>();
+
+    for (Activity activity in activities) {
+      if (activity.name.contains(activitySearch)) {
+        activitiesByName.add(activity);
+      }
+    }
+
+    return activitiesByName;
+  }
 }
