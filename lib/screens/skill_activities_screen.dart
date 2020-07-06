@@ -44,7 +44,22 @@ class _SkillActivitiesScreenState extends State<SkillActivitiesScreen> {
     });
   }
 
-  List<Widget> _getItemRequirements(List<Item> itemRequirements) {
+  List<Widget> alertDialogWidgets = [];
+
+  updateAlertDialogWidgets(Activity activity) async {
+    setState(() {
+      showSpinner = true;
+    });
+
+    alertDialogWidgets = [];
+    alertDialogWidgets = await _getActivityRequirements(activity);
+
+    setState(() {
+      showSpinner = false;
+    });
+  }
+
+  Future<List<Widget>> _getActivityRequirements(Activity activity) async {
     List<Widget> widgetRequirements = List<Widget>();
     widgetRequirements.add(Text(
       'Items required:',
@@ -60,7 +75,7 @@ class _SkillActivitiesScreenState extends State<SkillActivitiesScreen> {
       ),
     );
 
-    for (Item item in itemRequirements) {
+    for (Item item in activity.itemRequirements) {
       widgetRequirements.add(Text(
         '${item.itemAmount} x ${item.itemName}',
         style: TextStyle(
@@ -76,27 +91,69 @@ class _SkillActivitiesScreenState extends State<SkillActivitiesScreen> {
       ),
     );
 
+    bool _canCreateOne = await _activityService.canExecuteActivity(activity, 1);
+    bool _canCreateTen =
+        await _activityService.canExecuteActivity(activity, 10);
+    bool _canCreateHundred =
+        await _activityService.canExecuteActivity(activity, 100);
+
     widgetRequirements.add(Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         SizedBox(
           width: 60.0,
           child: RaisedButton(
-            onPressed: () {},
+            onPressed: _canCreateOne
+                ? () async {
+                    setState(() {
+                      showSpinner = true;
+                    });
+                    await _activityService.executeActivity(activity, 1);
+                    setState(() {
+                      showSpinner = false;
+                    });
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  }
+                : null,
             child: Text('1'),
           ),
         ),
         SizedBox(
           width: 60.0,
           child: RaisedButton(
-            onPressed: () {},
+            onPressed: _canCreateTen
+                ? () async {
+                    setState(() {
+                      showSpinner = true;
+                    });
+                    await _activityService.executeActivity(activity, 10);
+                    setState(() {
+                      showSpinner = false;
+                    });
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  }
+                : null,
             child: Text('10'),
           ),
         ),
         SizedBox(
           width: 60.0,
           child: RaisedButton(
-            onPressed: () {},
+            onPressed: _canCreateHundred
+                ? () async {
+                    setState(() {
+                      showSpinner = true;
+                    });
+                    await _activityService.executeActivity(activity, 100);
+                    setState(() {
+                      showSpinner = false;
+                    });
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  }
+                : null,
             child: Text('100'),
           ),
         ),
@@ -131,7 +188,9 @@ class _SkillActivitiesScreenState extends State<SkillActivitiesScreen> {
     _activitySearchController.clear();
   }
 
-  Future<void> _showRequirementsDialog(Activity activity) async {
+  Future<void> _showActivityRequirementsDialog(Activity activity) async {
+    await updateAlertDialogWidgets(activity);
+
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -146,7 +205,7 @@ class _SkillActivitiesScreenState extends State<SkillActivitiesScreen> {
           ),
           content: SingleChildScrollView(
             child: ListBody(
-              children: _getItemRequirements(activity.itemRequirements),
+              children: alertDialogWidgets,
             ),
           ),
           actions: <Widget>[
@@ -275,10 +334,8 @@ class _SkillActivitiesScreenState extends State<SkillActivitiesScreen> {
                             ),
                             trailing: IconButton(
                               icon: Icon(Icons.more_vert),
-                              onPressed: () {
-                                print(activity.itemRequirements);
-                                _showRequirementsDialog(activity);
-                              },
+                              onPressed: () =>
+                                  _showActivityRequirementsDialog(activity),
                             ),
                           ),
                         ),

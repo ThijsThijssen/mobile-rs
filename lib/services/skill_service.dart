@@ -26,6 +26,18 @@ class SkillService {
     return await _skillDAO.getSkills();
   }
 
+  Future<Skill> getSkillByName(String skillName) async {
+    List<Skill> skills = await getSkills();
+
+    for (Skill skill in skills) {
+      if (skill.skillName == skillName) {
+        return skill;
+      }
+    }
+
+    return null;
+  }
+
   int _experienceNeededForLevel(int level) {
     double total = 0;
 
@@ -51,5 +63,17 @@ class SkillService {
     }
 
     return currentLevel;
+  }
+
+  Future<void> addExperienceToSkill(String skillName, int experience) async {
+    List<Skill> skills = await _skillDAO.getSkills();
+
+    for (Skill skill in skills) {
+      if (skill.skillName == skillName) {
+        skill.skillExperience += experience;
+      }
+    }
+
+    await _skillDAO.updateSkills(skills);
   }
 }

@@ -12,7 +12,7 @@ class SkillDAO {
     if (_auth.currentUser() != null) {
       user = await _auth.currentUser();
 
-      await _updateSkills(skills);
+      await updateSkills(skills);
 
       return skills;
     } else {
@@ -20,7 +20,7 @@ class SkillDAO {
     }
   }
 
-  void _updateSkills(List<Skill> skills) async {
+  void updateSkills(List<Skill> skills) async {
     List<Map<String, dynamic>> dbSkills = List<Map<String, dynamic>>();
 
     for (Skill existingSkill in skills) {

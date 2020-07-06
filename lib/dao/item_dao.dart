@@ -46,7 +46,7 @@ class ItemDAO {
     List<Item> itemsByName = [];
 
     for (Item item in allItems) {
-      if (item.itemName.contains(itemName)) {
+      if (item.itemName.toLowerCase().contains(itemName.toLowerCase())) {
         itemsByName.add(item);
       }
     }
